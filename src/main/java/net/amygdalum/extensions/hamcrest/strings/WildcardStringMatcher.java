@@ -3,7 +3,6 @@ package net.amygdalum.extensions.hamcrest.strings;
 import static java.util.regex.Pattern.DOTALL;
 
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hamcrest.Description;
@@ -11,19 +10,13 @@ import org.hamcrest.TypeSafeMatcher;
 
 public class WildcardStringMatcher extends TypeSafeMatcher<String> {
 
-	private String pattern;
+	private WildcardPattern pattern;
 
 	public WildcardStringMatcher(String pattern) {
-		this.pattern = pattern;
+		this.pattern = compile(pattern);
 	}
 
-	@Override
-	public void describeTo(Description description) {
-		description.appendText("contains ").appendValue(pattern);
-	}
-
-	@Override
-	protected boolean matchesSafely(String item) {
+	private static WildcardPattern compile(String pattern) {
 		StringTokenizer t = new StringTokenizer(pattern, "?*", true);
 		StringBuilder buffer = new StringBuilder();
 		while (t.hasMoreTokens()) {
@@ -36,13 +29,31 @@ public class WildcardStringMatcher extends TypeSafeMatcher<String> {
 				buffer.append(Pattern.quote(nextToken));
 			}
 		}
-		Pattern p = Pattern.compile(buffer.toString(), DOTALL);
-		Matcher m = p.matcher(item);
-		return m.find();
+		return new WildcardPattern(pattern, Pattern.compile(buffer.toString(), DOTALL));
+	}
+
+	@Override
+	public void describeTo(Description description) {
+		description.appendText("contains wildcard pattern ").appendValue(pattern.rawPattern);
+	}
+
+	@Override
+	protected boolean matchesSafely(String item) {
+		return pattern.pattern.matcher(item).find();
 	}
 
 	public static WildcardStringMatcher containsPattern(String pattern) {
 		return new WildcardStringMatcher(pattern);
 	}
 
+	private static class WildcardPattern {
+		public String rawPattern;
+		public Pattern pattern;
+
+		public WildcardPattern(String rawPattern, Pattern pattern) {
+			this.rawPattern = rawPattern;
+			this.pattern = pattern;
+		}
+		
+	}
 }

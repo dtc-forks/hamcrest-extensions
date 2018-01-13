@@ -51,7 +51,7 @@ public class WildcardStringMatcherTest {
 		
 		containsPattern("just 1 char, '?', is matched").describeTo(description);
 		
-		assertThat(description.toString(), equalTo("contains \"just 1 char, '?', is matched\""));
+		assertThat(description.toString(), equalTo("contains wildcard pattern \"just 1 char, '?', is matched\""));
 	}
 
 	@Test
