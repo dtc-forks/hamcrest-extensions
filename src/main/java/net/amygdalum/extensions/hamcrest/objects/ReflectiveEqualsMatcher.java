@@ -6,6 +6,7 @@ import static java.util.Collections.emptyList;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,7 +42,45 @@ public class ReflectiveEqualsMatcher<T> extends TypeSafeMatcher<T> {
 
 	@Override
 	public void describeTo(Description description) {
-		description.appendText("should reflectively equal the given object: " + object.toString());
+		description.appendText("should reflectively equal the given object:\n" + describe(object, new HashSet<>(), 0));
+	}
+
+	@Override
+	protected void describeMismatchSafely(T item, Description mismatchDescription) {
+		mismatchDescription.appendText(", but was:\n" + describe(item, new HashSet<>(), 0));
+	}
+
+	private String describe(Object item, Set<Object> done, int indent) {
+		if (item == null) {
+			return "null";
+		} else if (item instanceof String) {
+			return "\"" + item + "\"";
+		} else if (item instanceof Number || item instanceof Character || item instanceof Boolean) {
+			return item.toString();
+		} else if (done.contains(item)) {
+			return "@";
+		} else {
+			done.add(item);
+		}
+		StringBuilder buffer = new StringBuilder(item.getClass().getSimpleName()).append(" {\n");
+		for (Field field : fields(item.getClass())) {
+			try {
+				Object value = field.get(item);
+				buffer.append(spaces(indent)).append(field.getName()).append(": ").append(describe(value, done, indent + 2));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				continue;
+			}
+			buffer.append(",\n");
+		}
+		buffer.setLength(buffer.length() - 2);
+		buffer.append("\n").append(spaces(indent)).append("}");
+		return buffer.toString();
+	}
+
+	private char[] spaces(int indent) {
+		char[] cs = new char[indent];
+		Arrays.fill(cs, ' ');
+		return cs;
 	}
 
 	@Override
@@ -66,9 +105,6 @@ public class ReflectiveEqualsMatcher<T> extends TypeSafeMatcher<T> {
 					continue;
 				}
 				for (Field field : fields(current.clazz)) {
-					if (field.isSynthetic() || excluded.contains(field.getName())) {
-						continue;
-					}
 					Object leftField = field.get(left);
 					Object rightField = field.get(right);
 					try {
@@ -151,6 +187,9 @@ public class ReflectiveEqualsMatcher<T> extends TypeSafeMatcher<T> {
 		List<Field> fields = new ArrayList<>();
 		while (clazz != null && clazz != Object.class) {
 			for (Field field : clazz.getDeclaredFields()) {
+				if (field.isSynthetic() || excluded.contains(field.getName())) {
+					continue;
+				}
 				field.setAccessible(true);
 				fields.add(field);
 			}

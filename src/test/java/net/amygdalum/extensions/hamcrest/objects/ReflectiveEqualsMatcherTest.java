@@ -2,16 +2,16 @@ package net.amygdalum.extensions.hamcrest.objects;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
-import static net.amygdalum.extensions.hamcrest.conventions.EnumMatcher.isEnum;
 import static net.amygdalum.extensions.hamcrest.objects.ReflectiveEqualsMatcher.reflectiveEqualTo;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static net.amygdalum.extensions.hamcrest.strings.WildcardStringMatcher.containsPattern;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
-
-import java.util.Collections;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
+
+import net.amygdalum.extensions.hamcrest.strings.WildcardStringMatcher;
 
 @SuppressWarnings("unused")
 public class ReflectiveEqualsMatcherTest {
@@ -22,7 +22,8 @@ public class ReflectiveEqualsMatcherTest {
 
 		reflectiveEqualTo(new GenericTestObject("str")).describeTo(description);
 
-		assertThat(description.toString(), equalTo("should reflectively equal the given object: {o:str}"));
+		assertThat(description.toString(), containsString("should reflectively equal the given object:"));
+		assertThat(description.toString(), WildcardStringMatcher.containsPattern("GenericTestObject*{*o: \"str\"*}"));
 	}
 
 	@Test
@@ -111,6 +112,43 @@ public class ReflectiveEqualsMatcherTest {
 		assertThat(reflectiveEqualTo(new BidimensionalTestObject(str1, str2)).matches(new BidimensionalTestObject(str1, str2)), is(true));
 	}
 
+	@Test
+	public void testErrorMessagesOnFlat() throws Exception {
+		ReflectiveEqualsMatcher<? super CrypticTestObject> matcher = reflectiveEqualTo(new CrypticTestObject("str1"));
+		
+
+		StringDescription description = new StringDescription();
+		matcher.describeTo(description);
+		matcher.describeMismatch(new CrypticTestObject("str2"), description);
+
+		assertThat(description.toString(), containsPattern("CrypticTestObject*{*o: \"str1\""));
+		assertThat(description.toString(), containsPattern("CrypticTestObject*{*o: \"str2\""));
+	}
+
+	@Test
+	public void testErrorMessagesOnNested() throws Exception {
+		ReflectiveEqualsMatcher<? super CrypticTestObject> matcher = reflectiveEqualTo(new CrypticTestObject(new CrypticTestObject("str1")));
+		
+		StringDescription description = new StringDescription();
+		matcher.describeTo(description);
+		matcher.describeMismatch(new CrypticTestObject(new CrypticTestObject("str2")), description);
+		
+		assertThat(description.toString(), containsPattern("CrypticTestObject*{*CrypticTestObject*{*o: \"str1\""));
+		assertThat(description.toString(), containsPattern("CrypticTestObject*{*CrypticTestObject*{*o: \"str2\""));
+	}
+	
+	@Test
+	public void testErrorMessagesOnDeeplyNested() throws Exception {
+		ReflectiveEqualsMatcher<? super CrypticTestObject> matcher = reflectiveEqualTo(new CrypticTestObject(new CrypticTestObject(new CrypticTestObject("str1"))));
+		
+		StringDescription description = new StringDescription();
+		matcher.describeTo(description);
+		matcher.describeMismatch(new CrypticTestObject(new CrypticTestObject(new CrypticTestObject("str2"))), description);
+		
+		assertThat(description.toString(), containsPattern("CrypticTestObject*{*CrypticTestObject*{*CrypticTestObject*{*o: \"str1\""));
+		assertThat(description.toString(), containsPattern("CrypticTestObject*{*CrypticTestObject*{*CrypticTestObject*{*o: \"str2\""));
+	}
+	
 	private static class GenericTestObject {
 		private Object o;
 
@@ -125,6 +163,18 @@ public class ReflectiveEqualsMatcherTest {
 		@Override
 		public String toString() {
 			return "{o:" + o.toString() + "}";
+		}
+	}
+	
+	private static class CrypticTestObject {
+		private Object o;
+		
+		public CrypticTestObject(Object o) {
+			this.o = o;
+		}
+		
+		public void setO(Object o) {
+			this.o = o;
 		}
 	}
 
