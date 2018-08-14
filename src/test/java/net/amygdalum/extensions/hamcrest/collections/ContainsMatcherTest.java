@@ -19,6 +19,15 @@ import org.junit.jupiter.api.Test;
 public class ContainsMatcherTest {
 
 	@Test
+	public void testMatchesAtLeastValues() throws Exception {
+		Set<String> set = set("foo", "bar");
+
+		assertThat(contains(String.class, "foo").atLeast().matchesSafely(set), is(true));
+		assertThat(contains(String.class, "bar").atLeast().matchesSafely(set), is(true));
+		assertThat(contains(String.class, "foo", "bar", "foobar").atLeast().matchesSafely(set), is(false));
+	}
+
+	@Test
 	public void testMatchesSafelyWithValues() throws Exception {
 		Set<String> set = set("foo", "bar");
 
@@ -126,6 +135,15 @@ public class ContainsMatcherTest {
 		contains(String.class, custom("foo")).describeMismatch(set("foo", "bar"), description);
 
 		assertThat(description.toString(), equalTo("mismatching elements <[., found 1 elements surplus [custom \"bar\"]]>"));
+	}
+
+	@Test
+	public void testDescribeMismatchAtLeastValues() throws Exception {
+		StringDescription description = new StringDescription();
+		
+		contains(String.class, "foobar").atLeast().describeMismatch(set("foo"), description);
+		
+		assertThat(description.toString(), equalTo("mismatching elements <[missing 1 elements]>"));
 	}
 
 	@Test

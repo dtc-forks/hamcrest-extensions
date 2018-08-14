@@ -21,6 +21,7 @@ public class MapMatcher<K,V> extends TypeSafeMatcher<Map<K,V>>{
 	
 	private Class<K> key;
 	private Class<V> value;
+	private boolean atLeast;
 	private Map<Matcher<K>,Matcher<V>> entries;
 	
 	public MapMatcher(Class<K> key, Class<V> value) {
@@ -29,10 +30,15 @@ public class MapMatcher<K,V> extends TypeSafeMatcher<Map<K,V>>{
 		this.entries = new LinkedHashMap<>();
 	}
 
+	public MapMatcher<K,V> atLeast() {
+		atLeast = true;
+		return this;
+	}
+
 	public MapMatcher<K,V> entry(K key, V value) {
 		return entry(matchKey(key), matchValue(value));
 	}
-
+	
 	public MapMatcher<K,V> entry(Matcher<K> key, V value) {
 		return entry(key, matchValue(value));
 	}
@@ -89,10 +95,10 @@ public class MapMatcher<K,V> extends TypeSafeMatcher<Map<K,V>>{
 		if (!unmatched.isEmpty()) {
 			mismatchDescription.appendText("missing entries ").appendValue(toMap(unmatched));
 		}
-		if (!unmatched.isEmpty() && !notfound.isEmpty()) {
+		if (!atLeast && !unmatched.isEmpty() && !notfound.isEmpty()) {
 			mismatchDescription.appendText(", ");
 		}
-		if (!notfound.isEmpty()) {
+		if (!atLeast && !notfound.isEmpty()) {
 			mismatchDescription.appendText("unmatched entries ").appendValue(toDescriptionMap(notfound));
 		}
 	}
@@ -148,7 +154,7 @@ public class MapMatcher<K,V> extends TypeSafeMatcher<Map<K,V>>{
 		for (Entry<K, V> entry : item.entrySet()) {
 		
 			boolean success = tryMatch(unmatched, entry);
-			if (!success) {
+			if (!success && !atLeast) {
 				return false;
 			}
 		}

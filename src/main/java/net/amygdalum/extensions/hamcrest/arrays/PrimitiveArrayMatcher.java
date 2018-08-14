@@ -10,10 +10,11 @@ import net.amygdalum.extensions.hamcrest.util.SimpleClass;
 public class PrimitiveArrayMatcher<T> extends TypeSafeMatcher<T> {
 
 	private T array;
-	private boolean anyOrder;
+	private Mode<T> match;
 
 	private PrimitiveArrayMatcher(T array) {
 		this.array = array;
+		this.match = new Exact();
 	}
 
 	public static PrimitiveArrayMatcher<boolean[]> booleanArrayContaining(boolean... items) {
@@ -49,26 +50,12 @@ public class PrimitiveArrayMatcher<T> extends TypeSafeMatcher<T> {
 	}
 
 	public PrimitiveArrayMatcher<T> inAnyOrder() {
-		Class<?> type = array.getClass().getComponentType();
-		if (type == boolean.class) {
-			sort((boolean[]) array);
-		} else if (type == char.class) {
-			Arrays.sort((char[]) array);
-		} else if (type == byte.class) {
-			Arrays.sort((byte[]) array);
-		} else if (type == short.class) {
-			Arrays.sort((short[]) array);
-		} else if (type == int.class) {
-			Arrays.sort((int[]) array);
-		} else if (type == float.class) {
-			Arrays.sort((float[]) array);
-		} else if (type == long.class) {
-			Arrays.sort((long[]) array);
-		} else if (type == double.class) {
-			Arrays.sort((double[]) array);
-		}
+		this.match = new AnyOrder();
+		return this;
+	}
 
-		this.anyOrder = true;
+	public PrimitiveArrayMatcher<T> atLeast() {
+		this.match = new AtLeast();
 		return this;
 	}
 
@@ -90,9 +77,9 @@ public class PrimitiveArrayMatcher<T> extends TypeSafeMatcher<T> {
 	@Override
 	public void describeTo(Description description) {
 		description.appendText("an array containing values of type ")
-				.appendValue(array.getClass().getComponentType())
-				.appendText(": ")
-				.appendValue(array);
+			.appendValue(array.getClass().getComponentType())
+			.appendText(": ")
+			.appendValue(array);
 	}
 
 	@Override
@@ -121,88 +108,326 @@ public class PrimitiveArrayMatcher<T> extends TypeSafeMatcher<T> {
 		}
 		Class<?> type = array.getClass().getComponentType();
 		if (type == boolean.class) {
-			return Arrays.equals((boolean[]) array, processed((boolean[]) item));
+			return match.match((boolean[]) array, (boolean[]) item);
 		} else if (type == char.class) {
-			return Arrays.equals((char[]) array, processed((char[]) item));
+			return match.match((char[]) array, (char[]) item);
 		} else if (type == byte.class) {
-			return Arrays.equals((byte[]) array, processed((byte[]) item));
+			return match.match((byte[]) array, (byte[]) item);
 		} else if (type == short.class) {
-			return Arrays.equals((short[]) array, processed((short[]) item));
+			return match.match((short[]) array, (short[]) item);
 		} else if (type == int.class) {
-			return Arrays.equals((int[]) array, processed((int[]) item));
+			return match.match((int[]) array, (int[]) item);
 		} else if (type == float.class) {
-			return Arrays.equals((float[]) array, processed((float[]) item));
+			return match.match((float[]) array, (float[]) item);
 		} else if (type == long.class) {
-			return Arrays.equals((long[]) array, processed((long[]) item));
+			return match.match((long[]) array, (long[]) item);
 		} else if (type == double.class) {
-			return Arrays.equals((double[]) array, processed((double[]) item));
+			return match.match((double[]) array, (double[]) item);
 		} else {
 			return false;
 		}
 	}
 
-	private boolean[] processed(boolean[] item) {
-		if (anyOrder) {
-			item = Arrays.copyOf(item, item.length);
-			sort(item);
-		}
+	private boolean[] sorted(boolean[] item) {
+		item = Arrays.copyOf(item, item.length);
+		sort(item);
 		return item;
 	}
 
-	private char[] processed(char[] item) {
-		if (anyOrder) {
-			item = Arrays.copyOf(item, item.length);
-			Arrays.sort(item);
-		}
+	private char[] sorted(char[] item) {
+		item = Arrays.copyOf(item, item.length);
+		Arrays.sort(item);
 		return item;
 	}
 
-	private byte[] processed(byte[] item) {
-		if (anyOrder) {
-			item = Arrays.copyOf(item, item.length);
-			Arrays.sort(item);
-		}
+	private byte[] sorted(byte[] item) {
+		item = Arrays.copyOf(item, item.length);
+		Arrays.sort(item);
 		return item;
 	}
 
-	private short[] processed(short[] item) {
-		if (anyOrder) {
-			item = Arrays.copyOf(item, item.length);
-			Arrays.sort(item);
-		}
+	private short[] sorted(short[] item) {
+		item = Arrays.copyOf(item, item.length);
+		Arrays.sort(item);
 		return item;
 	}
 
-	private int[] processed(int[] item) {
-		if (anyOrder) {
-			item = Arrays.copyOf(item, item.length);
-			Arrays.sort(item);
-		}
+	private int[] sorted(int[] item) {
+		item = Arrays.copyOf(item, item.length);
+		Arrays.sort(item);
 		return item;
 	}
 
-	private float[] processed(float[] item) {
-		if (anyOrder) {
-			item = Arrays.copyOf(item, item.length);
-			Arrays.sort(item);
-		}
+	private float[] sorted(float[] item) {
+		item = Arrays.copyOf(item, item.length);
+		Arrays.sort(item);
 		return item;
 	}
 
-	private long[] processed(long[] item) {
-		if (anyOrder) {
-			item = Arrays.copyOf(item, item.length);
-			Arrays.sort(item);
-		}
+	private long[] sorted(long[] item) {
+		item = Arrays.copyOf(item, item.length);
+		Arrays.sort(item);
 		return item;
 	}
 
-	private double[] processed(double[] item) {
-		if (anyOrder) {
-			item = Arrays.copyOf(item, item.length);
-			Arrays.sort(item);
-		}
+	private double[] sorted(double[] item) {
+		item = Arrays.copyOf(item, item.length);
+		Arrays.sort(item);
 		return item;
 	}
 
+	interface Mode<T> {
+
+		boolean match(boolean[] array, boolean[] item);
+
+		boolean match(double[] array, double[] item);
+
+		boolean match(long[] array, long[] item);
+
+		boolean match(float[] array, float[] item);
+
+		boolean match(int[] array, int[] item);
+
+		boolean match(short[] array, short[] item);
+
+		boolean match(byte[] array, byte[] item);
+
+		boolean match(char[] array, char[] item);
+
+	}
+
+	private class Exact implements Mode<T> {
+
+		@Override
+		public boolean match(boolean[] array, boolean[] item) {
+			return Arrays.equals(array, item);
+		}
+
+		@Override
+		public boolean match(double[] array, double[] item) {
+			return Arrays.equals(array, item);
+		}
+
+		@Override
+		public boolean match(long[] array, long[] item) {
+			return Arrays.equals(array, item);
+		}
+
+		@Override
+		public boolean match(float[] array, float[] item) {
+			return Arrays.equals(array, item);
+		}
+
+		@Override
+		public boolean match(int[] array, int[] item) {
+			return Arrays.equals(array, item);
+		}
+
+		@Override
+		public boolean match(short[] array, short[] item) {
+			return Arrays.equals(array, item);
+		}
+
+		@Override
+		public boolean match(byte[] array, byte[] item) {
+			return Arrays.equals(array, item);
+		}
+
+		@Override
+		public boolean match(char[] array, char[] item) {
+			return Arrays.equals(array, item);
+		}
+
+	}
+
+	private class AnyOrder implements Mode<T> {
+
+		@Override
+		public boolean match(boolean[] array, boolean[] item) {
+			return Arrays.equals(sorted(array), sorted(item));
+		}
+
+		@Override
+		public boolean match(double[] array, double[] item) {
+			return Arrays.equals(sorted(array), sorted(item));
+		}
+
+		@Override
+		public boolean match(long[] array, long[] item) {
+			return Arrays.equals(sorted(array), sorted(item));
+		}
+
+		@Override
+		public boolean match(float[] array, float[] item) {
+			return Arrays.equals(sorted(array), sorted(item));
+		}
+
+		@Override
+		public boolean match(int[] array, int[] item) {
+			return Arrays.equals(sorted(array), sorted(item));
+		}
+
+		@Override
+		public boolean match(short[] array, short[] item) {
+			return Arrays.equals(sorted(array), sorted(item));
+		}
+
+		@Override
+		public boolean match(byte[] array, byte[] item) {
+			return Arrays.equals(sorted(array), sorted(item));
+		}
+
+		@Override
+		public boolean match(char[] array, char[] item) {
+			return Arrays.equals(sorted(array), sorted(item));
+		}
+	}
+
+	private class AtLeast implements Mode<T> {
+
+		@Override
+		public boolean match(boolean[] array, boolean[] item) {
+			array = sorted(array);
+			item = sorted(item);
+			int i = 0;
+			for (int j = 0; i < array.length && j < item.length; i++) {
+				while (j < item.length) {
+					if (array[i] == item[j]) {
+						j++;
+						break;
+					} else {
+						j++;
+					}
+				}
+			}
+			return i == array.length;
+		}
+
+		@Override
+		public boolean match(double[] array, double[] item) {
+			array = sorted(array);
+			item = sorted(item);
+			int i = 0;
+			for (int j = 0; i < array.length && j < item.length; i++) {
+				while (j < item.length) {
+					if (array[i] == item[j]) {
+						j++;
+						break;
+					} else {
+						j++;
+					}
+				}
+			}
+			return i == array.length;
+		}
+
+		@Override
+		public boolean match(long[] array, long[] item) {
+			array = sorted(array);
+			item = sorted(item);
+			int i = 0;
+			for (int j = 0; i < array.length && j < item.length; i++) {
+				while (j < item.length) {
+					if (array[i] == item[j]) {
+						j++;
+						break;
+					} else {
+						j++;
+					}
+				}
+			}
+			return i == array.length;
+		}
+
+		@Override
+		public boolean match(float[] array, float[] item) {
+			array = sorted(array);
+			item = sorted(item);
+			int i = 0;
+			for (int j = 0; i < array.length && j < item.length; i++) {
+				while (j < item.length) {
+					if (array[i] == item[j]) {
+						j++;
+						break;
+					} else {
+						j++;
+					}
+				}
+			}
+			return i == array.length;
+		}
+
+		@Override
+		public boolean match(int[] array, int[] item) {
+			array = sorted(array);
+			item = sorted(item);
+			int i = 0;
+			for (int j = 0; i < array.length && j < item.length; i++) {
+				while (j < item.length) {
+					if (array[i] == item[j]) {
+						j++;
+						break;
+					} else {
+						j++;
+					}
+				}
+			}
+			return i == array.length;
+		}
+
+		@Override
+		public boolean match(short[] array, short[] item) {
+			array = sorted(array);
+			item = sorted(item);
+			int i = 0;
+			for (int j = 0; i < array.length && j < item.length; i++) {
+				while (j < item.length) {
+					if (array[i] == item[j]) {
+						j++;
+						break;
+					} else {
+						j++;
+					}
+				}
+			}
+			return i == array.length;
+		}
+
+		@Override
+		public boolean match(byte[] array, byte[] item) {
+			array = sorted(array);
+			item = sorted(item);
+			int i = 0;
+			for (int j = 0; i < array.length && j < item.length; i++) {
+				while (j < item.length) {
+					if (array[i] == item[j]) {
+						j++;
+						break;
+					} else {
+						j++;
+					}
+				}
+			}
+			return i == array.length;
+		}
+
+		@Override
+		public boolean match(char[] array, char[] item) {
+			array = sorted(array);
+			item = sorted(item);
+			int i = 0;
+			for (int j = 0; i < array.length && j < item.length; i++) {
+				while (j < item.length) {
+					if (array[i] == item[j]) {
+						j++;
+						break;
+					} else {
+						j++;
+					}
+				}
+			}
+			return i == array.length;
+		}
+
+	}
 }

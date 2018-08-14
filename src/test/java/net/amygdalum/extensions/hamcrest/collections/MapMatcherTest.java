@@ -20,6 +20,16 @@ import net.amygdalum.extensions.hamcrest.collections.MapMatcher;
 public class MapMatcherTest {
 
 	@Test
+	public void testMatchesAtLeastValues() throws Exception {
+		Map<String, String> map = map("foo", "bar", "08", "15");
+
+		assertThat(containsEntries(String.class, String.class).atLeast().entry("foo", "bar").matchesSafely(map), is(true));
+		assertThat(containsEntries(String.class, String.class).atLeast().entry("08", "15").matchesSafely(map), is(true));
+		assertThat(containsEntries(String.class, String.class).atLeast().entry("foo", "bar").entry("08", "15").matchesSafely(map), is(true));
+		assertThat(containsEntries(String.class, String.class).atLeast().entry("bar", "foo").matchesSafely(map), is(false));
+	}
+
+	@Test
 	public void testMatchesSafelyWithValues() throws Exception {
 		Map<String, String> map = map("foo", "bar", "08", "15");
 
@@ -178,6 +188,14 @@ public class MapMatcherTest {
 		assertThat(description.toString(), equalTo("unmatched entries <{custom \"47\"=custom \"11\"}>"));
 	}
 	
+	@Test
+	public void testDescribeMismatchAtLeastValues() throws Exception {
+		StringDescription description = new StringDescription();
+		
+		containsEntries(String.class, String.class).atLeast().entry(custom("bar"), custom("foo")).describeMismatch(map("foo","bar","08","15","47","11"), description);
+		
+		assertThat(description.toString(), equalTo("missing entries <{\"bar\"=\"foo\"}>"));
+	}
 
 	private Matcher<String> custom(String string) {
 		return new IsEqual<String>(string) {

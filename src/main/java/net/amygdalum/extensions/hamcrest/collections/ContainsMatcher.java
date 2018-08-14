@@ -22,11 +22,17 @@ import net.amygdalum.extensions.hamcrest.util.Matches;
 public class ContainsMatcher<T> extends TypeSafeMatcher<Collection<? extends T>> {
 
 	private Class<T> type;
+	private boolean atLeast;
 	private List<Matcher<T>> elements;
 
 	public ContainsMatcher(Class<T> type) {
 		this.type = type;
 		this.elements = new ArrayList<>();
+	}
+
+	public ContainsMatcher<T> atLeast() {
+		atLeast = true;
+		return this;
 	}
 
 	public ContainsMatcher<T> and(T element) {
@@ -67,7 +73,7 @@ public class ContainsMatcher<T> extends TypeSafeMatcher<Collection<? extends T>>
 			}
 		}
 
-		if (!notExpected.isEmpty()) {
+		if (!atLeast && !notExpected.isEmpty()) {
 			matches.mismatch("found " + notExpected.size() + " elements surplus " + toDescriptionSet(notExpected));
 		}
 		if (!unmatched.isEmpty()) {
@@ -107,7 +113,7 @@ public class ContainsMatcher<T> extends TypeSafeMatcher<Collection<? extends T>>
 
 		for (T element : item) {
 			boolean success = tryMatch(unmatched, element);
-			if (!success) {
+			if (!atLeast && !success) {
 				return false;
 			}
 		}

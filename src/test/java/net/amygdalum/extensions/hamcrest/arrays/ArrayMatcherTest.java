@@ -18,9 +18,15 @@ public class ArrayMatcherTest {
 	public void testMatchesSafelyWithValues() throws Exception {
 		String[] set = array("foo", "bar");
 
-		assertThat(arrayContaining(String.class, "foo", "bar").matchesSafely(set), is(true));
-		assertThat(arrayContaining(String.class, "bar", "foo")
-			.inAnyOrder()
+//		assertThat(arrayContaining(String.class, "foo", "bar").matchesSafely(set), is(true));
+//		assertThat(arrayContaining(String.class, "bar", "foo")
+//			.inAnyOrder()
+//			.matchesSafely(set), is(true));
+		assertThat(arrayContaining(String.class, "bar")
+			.atLeast()
+			.matchesSafely(set), is(true));
+		assertThat(arrayContaining(String.class, "foo")
+			.atLeast()
 			.matchesSafely(set), is(true));
 	}
 
@@ -62,6 +68,10 @@ public class ArrayMatcherTest {
 
 		assertThat(arrayContaining(String.class, "foo").matchesSafely(set), is(false));
 		assertThat(arrayContaining(String.class, "bar").matchesSafely(set), is(false));
+		assertThat(arrayContaining(String.class, "foo").inAnyOrder().matchesSafely(set), is(false));
+		assertThat(arrayContaining(String.class, "bar").inAnyOrder().matchesSafely(set), is(false));
+		assertThat(arrayContaining(String.class, "foo", "bar", "foobar").atLeast().matchesSafely(set), is(false));
+		assertThat(arrayContaining(String.class, "foobar").atLeast().matchesSafely(set), is(false));
 	}
 
 	@Test

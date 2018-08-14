@@ -122,7 +122,7 @@ public class ContainsInOrderMatcherTest {
 
 		assertThat(description.toString(), equalTo("mismatching elements <[found 1 elements surplus [was \"foo\"]]>"));
 	}
-	
+
 	@Test
 	public void testDescribeMismatchUnmatchedWithCustomMatcher() throws Exception {
 		StringDescription description = new StringDescription();

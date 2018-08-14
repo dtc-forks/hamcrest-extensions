@@ -22,11 +22,12 @@ import net.amygdalum.extensions.hamcrest.util.Matches;
 public class ArrayMatcher<T> extends TypeSafeMatcher<T[]> {
 
 	private Class<T> type;
+	private Mode<T> match;
 	private List<Matcher<T>> elements;
-	private boolean anyOrder;
 
 	public ArrayMatcher(Class<T> type) {
 		this.type = type;
+		this.match = new Exact();
 		this.elements = new ArrayList<>();
 	}
 
@@ -125,38 +126,7 @@ public class ArrayMatcher<T> extends TypeSafeMatcher<T[]> {
 
 	@Override
 	protected boolean matchesSafely(T[] item) {
-		if (item.length != elements.size()) {
-			return false;
-		}
-
-		if (anyOrder) {
-			List<Matcher<T>> pending = new ArrayList<>(elements);
-			Iterator<? extends T> itemIterator = Arrays.asList(item).iterator();
-			nextItem: while (itemIterator.hasNext()) {
-				T element = itemIterator.next();
-				Iterator<Matcher<T>> elementIterator = pending.iterator();
-				while (elementIterator.hasNext()) {
-					Matcher<T> matcher = elementIterator.next();
-					if (matcher.matches(element)) {
-						elementIterator.remove();
-						continue nextItem;
-					}
-				}
-				return false;
-			}
-			return pending.isEmpty();
-		} else {
-			Iterator<Matcher<T>> elementIterator = elements.iterator();
-			Iterator<? extends T> itemIterator = Arrays.asList(item).iterator();
-			while (elementIterator.hasNext() && itemIterator.hasNext()) {
-				Matcher<T> matcher = elementIterator.next();
-				T element = itemIterator.next();
-				if (!matcher.matches(element)) {
-					return false;
-				}
-			}
-			return true;
-		}
+		return match.matchesSafely(item);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -174,8 +144,89 @@ public class ArrayMatcher<T> extends TypeSafeMatcher<T[]> {
 	}
 
 	public ArrayMatcher<T> inAnyOrder() {
-		this.anyOrder = true;
+		this.match = new AnyOrder();
 		return this;
 	}
 
+	public ArrayMatcher<T> atLeast() {
+		this.match = new AtLeast();
+		return this;
+	}
+
+	interface Mode<T> {
+		public abstract boolean matchesSafely(T[] item);
+	}
+
+	private class Exact implements Mode<T> {
+
+		@Override
+		public boolean matchesSafely(T[] item) {
+			if (item.length != elements.size()) {
+				return false;
+			}
+			Iterator<Matcher<T>> elementIterator = elements.iterator();
+			Iterator<? extends T> itemIterator = Arrays.asList(item).iterator();
+			while (elementIterator.hasNext() && itemIterator.hasNext()) {
+				Matcher<T> matcher = elementIterator.next();
+				T element = itemIterator.next();
+				if (!matcher.matches(element)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+	}
+
+	private class AnyOrder implements Mode<T> {
+
+		@Override
+		public boolean matchesSafely(T[] item) {
+			if (item.length != elements.size()) {
+				return false;
+			}
+			List<Matcher<T>> pending = new ArrayList<>(elements);
+			Iterator<? extends T> itemIterator = Arrays.asList(item).iterator();
+			nextItem: while (itemIterator.hasNext()) {
+				T element = itemIterator.next();
+				Iterator<Matcher<T>> elementIterator = pending.iterator();
+				while (elementIterator.hasNext()) {
+					Matcher<T> matcher = elementIterator.next();
+					if (matcher.matches(element)) {
+						elementIterator.remove();
+						continue nextItem;
+					}
+				}
+				return false;
+			}
+			return pending.isEmpty();
+		}
+
+	}
+
+	private class AtLeast implements Mode<T> {
+
+		@Override
+		public boolean matchesSafely(T[] item) {
+			if (item.length < elements.size()) {
+				return false;
+			}
+			List<Matcher<T>> pending = new ArrayList<>(elements);
+			Iterator<? extends T> itemIterator = Arrays.asList(item).iterator();
+			nextItem: while (itemIterator.hasNext()) {
+				T element = itemIterator.next();
+				Iterator<Matcher<T>> elementIterator = pending.iterator();
+				while (elementIterator.hasNext()) {
+					Matcher<T> matcher = elementIterator.next();
+					if (matcher.matches(element)) {
+						elementIterator.remove();
+						continue nextItem;
+					}
+				}
+				continue;
+			}
+			return pending.isEmpty();
+		}
+
+	}
 }
