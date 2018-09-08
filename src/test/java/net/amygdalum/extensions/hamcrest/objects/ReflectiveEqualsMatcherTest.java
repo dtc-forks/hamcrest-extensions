@@ -50,6 +50,7 @@ public class ReflectiveEqualsMatcherTest {
 	public void testCustomBaseTypes() throws Exception {
 		assertThat(reflectiveEqualTo(new TestObjectWithCustomBaseTypes()).matches(new TestObjectWithCustomBaseTypes()), is(false));
 		assertThat(reflectiveEqualTo(new TestObjectWithCustomBaseTypes()).withBaseTypes(CompareObject.class).matches(new TestObjectWithCustomBaseTypes()), is(true));
+		assertThat(reflectiveEqualTo(new TestObjectWithCustomBaseTypes()).withBaseTypes(AnInterface.class).matches(new TestObjectWithCustomBaseTypes()), is(true));
 	}
 
 	@Test
@@ -227,7 +228,11 @@ public class ReflectiveEqualsMatcherTest {
 		}
 	}
 
-	private static class CompareObject {
+	private interface AnInterface {
+		
+	}
+	
+	private static class CompareObject implements AnInterface {
 		private static int COUNTER = 0;
 
 		private int counter = COUNTER++;

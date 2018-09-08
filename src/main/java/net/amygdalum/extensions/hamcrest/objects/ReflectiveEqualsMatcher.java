@@ -170,7 +170,8 @@ public class ReflectiveEqualsMatcher<T> extends TypeSafeMatcher<T> {
 	}
 
 	public boolean isCustomBaseType(Class<?> clazz) {
-		return customBaseTypes.contains(clazz);
+		return customBaseTypes.stream()
+			.anyMatch(base -> base.isAssignableFrom(clazz));
 	}
 
 	public boolean isBaseType(Class<?> clazz) {
