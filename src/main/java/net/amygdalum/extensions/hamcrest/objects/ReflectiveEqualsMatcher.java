@@ -199,7 +199,7 @@ public class ReflectiveEqualsMatcher<T> extends TypeSafeMatcher<T> {
 		return fields;
 	}
 
-	public static <T> ReflectiveEqualsMatcher<? super T> reflectiveEqualTo(T object) {
+	public static <T> ReflectiveEqualsMatcher<T> reflectiveEqualTo(T object) {
 		return new ReflectiveEqualsMatcher<T>(object);
 	}
 
