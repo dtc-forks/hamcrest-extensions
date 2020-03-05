@@ -3,7 +3,7 @@ package net.amygdalum.extensions.hamcrest.conventions;
 import static net.amygdalum.extensions.hamcrest.conventions.OrdinaryExceptionMatcher.matchesOrdinaryException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;

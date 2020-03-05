@@ -3,7 +3,7 @@ package net.amygdalum.extensions.hamcrest.conventions;
 import static net.amygdalum.extensions.hamcrest.conventions.EnumMatcher.isEnum;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.*;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;

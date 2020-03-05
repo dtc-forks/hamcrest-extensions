@@ -1,9 +1,9 @@
 package net.amygdalum.extensions.hamcrest.strings;
 
 import static net.amygdalum.extensions.hamcrest.strings.RegexStringMatcher.containsPattern;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
@@ -52,12 +52,47 @@ public class RegexStringMatcherTest {
 	}
 
 	@Test
+	public void testMatchesSafelyWithGroups() throws Exception {
+		assertThat(containsPattern("pattern (.*):(.*) is matched")
+			.withGroup(1, equalTo("key"))
+			.withGroup(2, equalTo("value"))
+			.matches("pattern key:value is matched"), is(true));
+		assertThat(containsPattern("pattern (.*):(.*) is matched")
+			.withGroup(1, equalTo("key"))
+			.withGroup(2, equalTo("value"))
+			.matches("pattern keyvalue is matched"), is(false));
+		assertThat(containsPattern("pattern (.*):(.*) is matched")
+			.withGroup(1, equalTo("key"))
+			.withGroup(2, equalTo("value"))
+			.matches("pattern key1:value is matched"), is(false));
+		assertThat(containsPattern("pattern (.*):(.*) is matched")
+			.withGroup(1, equalTo("key"))
+			.withGroup(2, equalTo("value"))
+			.matches("pattern key:value1 is matched"), is(false));
+	}
+
+	@Test
 	public void testDescribeTo() throws Exception {
 		StringDescription description = new StringDescription();
 
 		containsPattern("just 1 char, '.', is matched").describeTo(description);
 
 		assertThat(description.toString(), equalTo("contains regex pattern <just 1 char, '.', is matched>"));
+	}
+
+	@Test
+	public void testDescribeToWithGroups() throws Exception {
+		StringDescription description = new StringDescription();
+
+		containsPattern("pattern (.*):(.*) is matched")
+			.withGroup(1, equalTo("key"))
+			.withGroup(2, equalTo("value"))
+			.describeTo(description);
+
+		assertThat(description.toString(), equalTo(""
+			+ "contains regex pattern <pattern (.*):(.*) is matched>"
+			+ "\n\twith group 1 matching \"key\""
+			+ "\n\twith group 2 matching \"value\""));
 	}
 
 	@Test

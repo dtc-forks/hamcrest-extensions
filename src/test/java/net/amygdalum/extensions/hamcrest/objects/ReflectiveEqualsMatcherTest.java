@@ -6,7 +6,7 @@ import static net.amygdalum.extensions.hamcrest.objects.ReflectiveEqualsMatcher.
 import static net.amygdalum.extensions.hamcrest.strings.WildcardStringMatcher.containsPattern;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;

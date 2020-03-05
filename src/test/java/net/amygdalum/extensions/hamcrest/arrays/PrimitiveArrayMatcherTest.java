@@ -10,7 +10,7 @@ import static net.amygdalum.extensions.hamcrest.arrays.PrimitiveArrayMatcher.lon
 import static net.amygdalum.extensions.hamcrest.arrays.PrimitiveArrayMatcher.shortArrayContaining;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
