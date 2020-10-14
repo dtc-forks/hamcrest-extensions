@@ -9,8 +9,8 @@ import static net.amygdalum.extensions.hamcrest.arrays.PrimitiveArrayMatcher.int
 import static net.amygdalum.extensions.hamcrest.arrays.PrimitiveArrayMatcher.longArrayContaining;
 import static net.amygdalum.extensions.hamcrest.arrays.PrimitiveArrayMatcher.shortArrayContaining;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;

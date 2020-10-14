@@ -4,8 +4,8 @@ import static net.amygdalum.extensions.hamcrest.conventions.EqualityMatcher.sati
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
@@ -94,7 +94,7 @@ public class EqualityMatcherTest {
 		boolean matches = satisfiesDefaultEquality().matchesSafely(new DefaultEqual(), description);
 
 		assertThat(matches, is(true));
-		assertThat(description.toString(), isEmptyString());
+		assertThat(description.toString(), emptyString());
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class EqualityMatcherTest {
 			.matchesSafely(new DefaultEqual("field"), description);
 
 		assertThat(matches, is(true));
-		assertThat(description.toString(), isEmptyString());
+		assertThat(description.toString(), emptyString());
 	}
 
 	@Test
@@ -181,7 +181,7 @@ public class EqualityMatcherTest {
 			.matchesSafely(new DefaultEqualToString("field"), description);
 
 		assertThat(matches, is(true));
-		assertThat(description.toString(), isEmptyString());
+		assertThat(description.toString(), emptyString());
 	}
 
 	@Test
@@ -193,7 +193,7 @@ public class EqualityMatcherTest {
 			.matchesSafely(new DefaultEqual("field1"), description);
 
 		assertThat(matches, is(true));
-		assertThat(description.toString(), isEmptyString());
+		assertThat(description.toString(), emptyString());
 	}
 
 	@Test

@@ -2,9 +2,9 @@ package net.amygdalum.extensions.hamcrest.conventions;
 
 import static net.amygdalum.extensions.hamcrest.conventions.UtilityClassMatcher.isUtilityClass;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
 
@@ -72,7 +72,7 @@ public class UtilityClassMatcherTest {
 		boolean matches = isUtilityClass().matchesSafely(Utility.class, description);
 		
 		assertThat(matches, is(true));
-		assertThat(description.toString(), isEmptyString());
+		assertThat(description.toString(), emptyString());
 	}
 	
 	@Test
@@ -82,7 +82,7 @@ public class UtilityClassMatcherTest {
 		boolean matches = isUtilityClass().matchesSafely(UtilityThrowingRuntimeException.class, description);
 		
 		assertThat(matches, is(true));
-		assertThat(description.toString(), isEmptyString());
+		assertThat(description.toString(), emptyString());
 	}
 	
 	public static class NotFinal {

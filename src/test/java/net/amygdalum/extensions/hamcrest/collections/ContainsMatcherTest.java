@@ -2,9 +2,9 @@ package net.amygdalum.extensions.hamcrest.collections;
 
 import static net.amygdalum.extensions.hamcrest.collections.ContainsMatcher.contains;
 import static net.amygdalum.extensions.hamcrest.collections.ContainsMatcher.empty;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.HashSet;

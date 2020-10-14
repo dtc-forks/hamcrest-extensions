@@ -1,9 +1,9 @@
 package net.amygdalum.extensions.hamcrest.strings;
 
 import static net.amygdalum.extensions.hamcrest.strings.WildcardStringMatcher.containsPattern;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;

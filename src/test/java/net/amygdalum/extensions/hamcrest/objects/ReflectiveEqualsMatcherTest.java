@@ -5,8 +5,8 @@ import static java.util.Collections.singleton;
 import static net.amygdalum.extensions.hamcrest.objects.ReflectiveEqualsMatcher.reflectiveEqualTo;
 import static net.amygdalum.extensions.hamcrest.strings.WildcardStringMatcher.containsPattern;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;

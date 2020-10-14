@@ -1,9 +1,9 @@
 package net.amygdalum.extensions.hamcrest.exceptions;
 
 import static net.amygdalum.extensions.hamcrest.exceptions.ExceptionMatcher.matchesException;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,10 @@
 package net.amygdalum.extensions.hamcrest.arrays;
 
 import static net.amygdalum.extensions.hamcrest.arrays.ArrayMatcher.arrayContaining;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

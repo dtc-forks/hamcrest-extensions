@@ -2,9 +2,9 @@ package net.amygdalum.extensions.hamcrest.collections;
 
 import static net.amygdalum.extensions.hamcrest.collections.MapMatcher.containsEntries;
 import static net.amygdalum.extensions.hamcrest.collections.MapMatcher.noEntries;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +14,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Test;
-
-import net.amygdalum.extensions.hamcrest.collections.MapMatcher;
 
 public class MapMatcherTest {
 
