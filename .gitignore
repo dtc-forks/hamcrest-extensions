@@ -2,3 +2,7 @@
 /.settings/
 /.classpath
 /.project
+
+red4j-data/
+**/cp.txt
+**.java.orig
